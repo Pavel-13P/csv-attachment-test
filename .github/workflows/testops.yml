@@ -1,19 +1,19 @@
-name: Upload to TestOps
+name: Run tests
 
 on:
   push:
     branches:
       - main
 
+env:
+  ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+  ALLURE_ENDPOINT: https://testing.testops.cloud/
+  ALLURE_PROJECT_ID: 15030
+  ALLURE_RESULTS: allure-results
+
 jobs:
-  upload-results:
-
+  test:
     runs-on: ubuntu-latest
-
-    env:
-      ALLURE_ENDPOINT: ${{ secrets.ALLURE_ENDPOINT }}
-      ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
-      ALLURE_PROJECT_ID: ${{ secrets.ALLURE_PROJECT_ID }}
 
     steps:
       - name: Checkout repository
@@ -23,13 +23,23 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: '17'
 
-      - name: Download allurectl
-        run: |
-          curl -fsSL https://github.com/allure-framework/allurectl/releases/latest/download/allurectl_linux_amd64 -o allurectl
-          chmod +x allurectl
+      - name: Install and configure allurectl
+        uses: allure-framework/setup-allurectl@v1
+        with:
+          allure-endpoint: ${{ env.ALLURE_ENDPOINT }}
+          allure-token: ${{ secrets.ALLURE_TOKEN }}
+          allure-project-id: ${{ env.ALLURE_PROJECT_ID }}
 
-      - name: Run tests and upload results
+      - name: Run tests with Allure
         run: |
-          ./allurectl watch -- mvn test
+          allurectl watch -- mvn test
+
+      - name: Save TR as files
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ github.run_id }}
+          path: ${{ env.ALLURE_RESULTS }}
+          retention-days: 1
