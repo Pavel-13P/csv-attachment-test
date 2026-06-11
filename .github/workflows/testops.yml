@@ -1,0 +1,35 @@
+name: Upload to TestOps
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  upload-results:
+
+    runs-on: ubuntu-latest
+
+    env:
+      ALLURE_ENDPOINT: ${{ secrets.ALLURE_ENDPOINT }}
+      ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+      ALLURE_PROJECT_ID: ${{ secrets.ALLURE_PROJECT_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Download allurectl
+        run: |
+          curl -fsSL https://github.com/allure-framework/allurectl/releases/latest/download/allurectl_linux_amd64 -o allurectl
+          chmod +x allurectl
+
+      - name: Run tests and upload results
+        run: |
+          ./allurectl watch -- mvn test
