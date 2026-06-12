@@ -8,12 +8,20 @@ public class CsvAttachmentTest {
     @Test
     void attachCsv() {
 
+        attach("A_10000_rows_20_chars.csv");
+        attach("B_10000_rows_1000_chars.csv");
+        attach("C_50000_rows_20_chars.csv");
+        attach("D_100_rows_100000_chars.csv");
+    }
+
+    private void attach(String fileName) {
+
         InputStream file = getClass()
                 .getClassLoader()
-                .getResourceAsStream("testops_large_attachment_10000_rows.csv");
+                .getResourceAsStream(fileName);
 
         Allure.addAttachment(
-                "large-csv",
+                fileName,
                 "text/csv",
                 file,
                 ".csv"
