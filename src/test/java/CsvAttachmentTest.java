@@ -8,10 +8,11 @@ public class CsvAttachmentTest {
     @Test
     void attachCsv() {
 
-        attach("A_10000_rows_20_chars.csv");
-        attach("B_10000_rows_1000_chars.csv");
-        attach("C_50000_rows_20_chars.csv");
-        attach("D_100_rows_100000_chars.csv");
+        attach("A_300KB_10000rows.csv");
+        attach("B_150KB_5000rows.csv");
+        attach("C_250KB_1000rows.csv");
+        attach("D_450KB_10000rows.csv");
+        attach("E_300KB_100rows.csv");
     }
 
     private void attach(String fileName) {
