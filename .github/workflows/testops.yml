@@ -1,10 +1,14 @@
 name: Run tests
 
 on:
-  push:
-    branches:
-      - main
-
+ workflow_dispatch:
+   inputs:
+     ALLURE_JOB_RUN_ID:
+       description: "ALLURE_JOB_RUN_ID service parameter. Leave blank."
+       required: false
+     ALLURE_USERNAME:
+       description: "ALLURE_USERNAME service parameter. Leave blank"
+       required: false
 env:
   ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
   ALLURE_ENDPOINT: https://testing.testops.cloud/
